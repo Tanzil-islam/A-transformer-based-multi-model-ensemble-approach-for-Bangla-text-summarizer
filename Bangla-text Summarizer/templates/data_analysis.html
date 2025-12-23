@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% block title %}Data Analysis | Bangla Crime News Summarizer{% endblock %}
+
+{% block content %}
+
+<style>
+
+.top-menu {
+    position: none;          /* FIXED — no more moving */
+    top: 60px;                /* sits right under the navbar */
+    left: 0;
+    width: 100%;
+    background: var(--card-bg);
+    padding: 12px 14px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    border-bottom: 2px solid var(--red);
+    z-index: 999;            /* stays above content */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+}
+
+.top-menu a {
+    color: var(--paper);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid var(--folder);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    transition: 0.2s;
+    font-size: 13px;
+    font-weight: 600;
+}
+.top-menu a:hover {
+    background: var(--red);
+    border-color: var(--red);
+}
+
+/* ============================
+   Dataset Viewer
+   ============================ */
+.dataset-box {
+    max-height: 430px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    border: 2px solid var(--red);
+    border-radius: 8px;
+    margin-top: 15px;
+    background: #14171B;
+}
+
+/* ============================
+   Evidence-style Plot Box
+   ============================ */
+.img-box {
+    border: 2px solid var(--folder);
+    padding: 16px;
+    border-radius: 10px;
+    background: #1b1f23;
+    margin-top: 22px;
+    text-align: center;
+    box-shadow: 0 0 12px rgba(164, 31, 19, 0.25);
+    transition: 0.2s ease;
+}
+.img-box:hover {
+    transform: scale(1.015);
+    box-shadow: 0 0 16px rgba(255, 0, 0, 0.28);
+}
+.img-box img {
+    max-width: 100%;
+    border-radius: 8px;
+    cursor: zoom-in;
+}
+
+/* ============================
+   Info Grid
+   ============================ */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+.info-card {
+    background: #1b1f23;
+    padding: 16px;
+    border: 2px solid var(--folder);
+    border-radius: 10px;
+    text-align: center;
+}
+.info-number {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--paper);
+}
+
+/* ============================
+   Modal Zoom Viewer
+   ============================ */
+#plotModal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 5, 5, 0.92);
+}
+#plotModal img {
+    position: absolute;
+    max-width: 90%;
+    max-height: 90%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 3px solid var(--red);
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(255,0,0,0.35);
+    cursor: zoom-out;
+}
+
+</style>
+
+<!-- Sticky internal navigation -->
+<div class="top-menu">
+    <a href="#dataset">Dataset</a>
+    <a href="#info">Basic Info</a>
+    <a href="#wordcount">Word Count</a>
+    <a href="#plots">Plots</a>
+    <a href="#clouds">Wordclouds</a>
+</div>
+
+<h1 class="page-title">Dataset Analysis Dashboard</h1>
+
+<!-- SECTION 1 — DATASET -->
+<section id="dataset" class="section">
+  <h2>📁 Dataset Preview</h2>
+  <p class="section-subtext">
+    Scroll horizontally and vertically to explore the dataset stored at:
+    <code>static/eda/dataset.xlsx</code>
+  </p>
+
+  <div id="datasetTable" class="dataset-box">
+    <!-- JS loads dataset here -->
+  </div>
+</section>
+
+<!-- SECTION 2 — BASIC INFO -->
+<section id="info" class="section">
+  <h2>📌 Basic Information</h2>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Total Rows</h3>
+      <p class="info-number">4000</p>
+    </div>
+    <div class="info-card">
+      <h3>Train</h3>
+      <p class="info-number">2800 <span>(70.00%)</span></p>
+    </div>
+    <div class="info-card">
+      <h3>Validation</h3>
+      <p class="info-number">420 <span>(10.50%)</span></p>
+    </div>
+    <div class="info-card">
+      <h3>Test</h3>
+      <p class="info-number">780<span>(19.50%)</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 — WORD COUNTS -->
+<section id="wordcount" class="section">
+  <h2>📝 Word Count & Summary Ratio (Sample Rows)</h2>
+  <p class="section-subtext">
+    Word counts were computed for dataset rows and a summary ratio created:
+    <code>summary_word_count / text_word_count</code>.
+  </p>
+
+  <div class="dataset-box" style="max-height: 260px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Text Word Count</th>
+          <th>Summary Word Count</th>
+          <th>Summary Ratio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>140</td><td>37</td><td>0.264</td></tr>
+        <tr><td>227</td><td>43</td><td>0.189</td></tr>
+        <tr><td>351</td><td>18</td><td>0.051</td></tr>
+        <tr><td>192</td><td>25</td><td>0.130</td></tr>
+        <tr><td>450</td><td>29</td><td>0.064</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SECTION 4 — PLOTS -->
+<section id="plots" class="section">
+  <h2>📊 Distribution Plots</h2>
+
+  <!-- Train / Test Split -->
+  <div class="img-box">
+    <h3>Train / Validation / Test Split</h3>
+    <img src="/static/eda/train_testsplitbar.png"
+         onclick="openModal(this.src)">
+  </div>
+
+  <!-- Text Word Count -->
+  <div class="img-box">
+    <h3>Text Word Count Distribution</h3>
+    <img src="/static/eda/text_word_count_distribution.png"
+         onclick="openModal(this.src)">
+  </div>
+
+
+  <!-- Summary Ratio -->
+  <div class="img-box">
+    <h3>Summary Ratio Distribution</h3>
+    <img src="/static/eda/distribution_of_summary_ratio.png"
+         onclick="openModal(this.src)">
+  </div>
+</section>
+
+<!-- SECTION 5 — WORDCLOUDS -->
+<section id="clouds" class="section">
+  <h2>☁ Word Clouds</h2>
+
+  <div class="img-box">
+    <h3>Text Wordcloud</h3>
+    <img src="/static/eda/wordcloud_text.png"
+         onclick="openModal(this.src)">
+  </div>
+
+  <div class="img-box">
+    <h3>Summary Wordcloud</h3>
+    <img src="/static/eda/wordcloud_summary.png"
+         onclick="openModal(this.src)">
+  </div>
+</section>
+
+<!-- Modal for zoomed images -->
+<div id="plotModal" onclick="closeModal()">
+    <img id="modalImg">
+</div>
+
+<script>
+function openModal(src) {
+    document.getElementById("plotModal").style.display = "block";
+    document.getElementById("modalImg").src = src;
+}
+function closeModal() {
+    document.getElementById("plotModal").style.display = "none";
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    loadDataset("/static/eda/dataset.xlsx");
+});
+function loadDataset(path) {
+    fetch(path)
+        .then(res => res.arrayBuffer())
+        .then(buf => {
+            const workbook = XLSX.read(buf, { type: "array" });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(sheet);
+            renderTable(json);
+        })
+        .catch(err => console.error("Dataset load error:", err));
+}
+function renderTable(data) {
+    if (!data.length) return;
+    let table = "<table><thead><tr>";
+    Object.keys(data[0]).forEach(col => table += `<th>${col}</th>`);
+    table += "</tr></thead><tbody>";
+    data.forEach(row => {
+        table += "<tr>";
+        Object.values(row).forEach(val => table += `<td>${val}</td>`);
+        table += "</tr>";
+    });
+    table += "</tbody></table>";
+    document.getElementById("datasetTable").innerHTML = table;
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+{% block title %}Model & Results | Bangla Crime News Summarizer{% endblock %}
+
+{% block content %}
+
+<style>
+/* ============================
+   Loading overlay / progress bar
+   ============================ */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-box {
+  background: #1b1f24;
+  border-radius: 10px;
+  padding: 18px 24px;
+  border: 1px solid var(--border);
+  width: 320px;
+  color: var(--paper);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+}
+
+.loading-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.loading-sub {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-bottom: 10px;
+}
+
+.loading-bar-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #111418;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #A41F13, #ff784e);
+  animation: loadingBarAnim 2.8s infinite;
+}
+
+.loading-steps {
+  font-size: 12px;
+  color: var(--file-grey);
+}
+
+@keyframes loadingBarAnim {
+  0%   { width: 0%; }
+  40%  { width: 65%; }
+  80%  { width: 95%; }
+  100% { width: 100%; }
+}
+
+/* ============================
+   Method badges + best highlight
+   ============================ */
+
+.summary-item {
+  background: #14181d;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.summary-item summary {
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-item-best {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px rgba(164,31,19,0.6);
+}
+
+/* pill-style colored badges per method */
+.method-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  border: 1px solid currentColor;
+  opacity: 0.9;
+}
+
+.badge-extractive { color: #facc15; }   /* yellow */
+.badge-rank       { color: #fb923c; }   /* orange */
+.badge-voting     { color: #c4b5fd; }   /* purple */
+.badge-transform  { color: #67e8f9; }   /* cyan */
+.badge-hybrid     { color: #f97373; }   /* soft red */
+
+/* ============================
+   Best summary: slanted stamp + fingerprint-style bg
+   ============================ */
+
+.best-summary-wrapper {
+  position: relative;
+  padding-top: 18px;
+}
+
+/* clean, slanted, modern forensic stamp */
+.case-stamp-main {
+  position: absolute;
+  top: -6px;
+  right: 12px;
+  padding: 4px 16px;
+  border-radius: 6px;
+  border: 2px solid #A41F13;
+  background: rgba(18, 21, 26, 0.96);
+  color: #A41F13;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  transform: rotate(-10deg);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.8), 0 0 18px rgba(0,0,0,0.7);
+  pointer-events: none;
+}
+
+.case-stamp-main::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 6px;
+  border: 1px dashed rgba(164,31,19,0.45);
+  opacity: 0.9;
+  transform: rotate(3deg);
+}
+
+/* subtle fingerprint-like texture using gradients */
+.best-summary-box {
+  position: relative;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(250,245,241,0.06) 0, transparent 55%),
+    radial-gradient(circle at 72% 70%, rgba(250,245,241,0.03) 0, transparent 60%),
+    #14181d;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 12px;
+  font-size: 14px;
+}
+</style>
+
+<!-- Overlay shown while request is running -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-box">
+    <div class="loading-title">Analyzing Article &amp; Generating Summaries…</div>
+    <div class="loading-sub">
+      First request after server start may take longer while models are loaded.
+    </div>
+    <div class="loading-bar-track">
+      <div class="loading-bar-fill"></div>
+    </div>
+    <div class="loading-steps">
+      • Loading ensemble models<br>
+      • Generating 5 candidate summaries<br>
+      • Scoring with metrics (incl. hallucination &amp; keywords)<br>
+      • Selecting best, most faithful summary
+    </div>
+  </div>
+</div>
+
+<h1 class="page-title">Model Implementation &amp; Results</h1>
+
+<section class="section">
+  <h2 class="section-title">Ensemble Summarizer</h2>
+  <p class="section-subtext">
+    Paste a Bangla crime news article below. The system will generate summaries from five
+    different methods, evaluate them with semantic, lexical, faithfulness and keyword
+    metrics, and then select the most informative, least hallucinated summary.
+  </p>
+
+  <form class="card form-card" method="post" id="summaryForm">
+    <label class="form-label">Bangla Crime News Article</label>
+    <textarea name="text" rows="8" required>{{ text or "" }}</textarea>
+
+    <button type="submit" class="btn btn-primary">Generate Summaries</button>
+  </form>
+</section>
+
+{% if result %}
+  {% set best = result.scores[result.best_method] %}
+
+  <section class="section">
+    <h2 class="section-title">Generated Summaries</h2>
+    <p class="section-subtext">Click any method to expand its full summary.</p>
+
+    <details class="summary-item {% if result.best_method == 'extractive' %}summary-item-best{% endif %}">
+      <summary>
+        Extractive Fusion
+        <span class="method-badge badge-extractive">Extractive</span>
+        {% if result.best_method == 'extractive' %}
+          <span class="method-badge badge-hybrid">Best</span>
+        {% endif %}
+      </summary>
+      <p>{{ result.summaries.extractive }}</p>
+    </details>
+
+    <details class="summary-item {% if result.best_method == 'rank' %}summary-item-best{% endif %}">
+      <summary>
+        Rank Fusion
+        <span class="method-badge badge-rank">Rank</span>
+        {% if result.best_method == 'rank' %}
+          <span class="method-badge badge-hybrid">Best</span>
+        {% endif %}
+      </summary>
+      <p>{{ result.summaries.rank }}</p>
+    </details>
+
+    <details class="summary-item {% if result.best_method == 'voting' %}summary-item-best{% endif %}">
+      <summary>
+        Voting Fusion
+        <span class="method-badge badge-voting">Voting</span>
+        {% if result.best_method == 'voting' %}
+          <span class="method-badge badge-hybrid">Best</span>
+        {% endif %}
+      </summary>
+      <p>{{ result.summaries.voting }}</p>
+    </details>
+
+    <details class="summary-item {% if result.best_method == 'transformer' %}summary-item-best{% endif %}">
+      <summary>
+        Transformer Fusion
+        <span class="method-badge badge-transform">Transformer</span>
+        {% if result.best_method == 'transformer' %}
+          <span class="method-badge badge-hybrid">Best</span>
+        {% endif %}
+      </summary>
+      <p>{{ result.summaries.transformer }}</p>
+    </details>
+
+    <details class="summary-item {% if result.best_method == 'hybrid' %}summary-item-best{% endif %}">
+      <summary>
+        Hybrid Fusion
+        <span class="method-badge badge-hybrid">Hybrid</span>
+        {% if result.best_method == 'hybrid' %}
+          <span class="method-badge badge-hybrid">Best</span>
+        {% endif %}
+      </summary>
+      <p>{{ result.summaries.hybrid }}</p>
+    </details>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Best Selected Summary</h2>
+    <p class="section-subtext">
+      The system selected the summary with the best balance of coverage, length, faithfulness
+      (low hallucination) and keyword preservation.
+    </p>
+
+    <p>
+      <strong>Method:</strong> {{ result.best_method | upper }}<br>
+      <strong>Confidence:</strong>
+      {{ '%.2f'|format(best['confidence']) }}
+    </p>
+
+    <p>
+      <strong>Hallucination Risk:</strong>
+      {% if best['hallucination_score'] <= 0.15 %}
+        Low
+      {% elif best['hallucination_score'] <= 0.35 %}
+        Medium
+      {% else %}
+        High
+      {% endif %}
+      (score: {{ '%.2f'|format(best['hallucination_score']) }})<br>
+      <strong>Keyword Preservation:</strong>
+      {{ '%.2f'|format(best['keyword_preservation']) }}
+    </p>
+
+    <div class="best-summary-wrapper">
+    
+      <div class="best-summary-box">
+        {{ result.best_summary }}
+      </div>
+    </div>
+  </section>
+
+  {% if result.plots.per_method_final_scores %}
+  <section class="section">
+    <h2 class="section-title">Final Scores per Method</h2>
+    <img
+      src="data:image/png;base64,{{ result.plots.per_method_final_scores }}"
+      class="plot-img"
+      alt="Final scores per method"
+    />
+  </section>
+  {% endif %}
+
+  {% if result.plots.best_method_metric_breakdown %}
+  <section class="section">
+    <h2 class="section-title">Best Method Metric Breakdown</h2>
+    <img
+      src="data:image/png;base64,{{ result.plots.best_method_metric_breakdown }}"
+      class="plot-img"
+      alt="Best method metric breakdown"
+    />
+  </section>
+  {% endif %}
+
+  {% if result.plots.per_method_metrics_grouped %}
+  <section class="section">
+    <h2 class="section-title">Metrics per Method (Grouped)</h2>
+    <img
+      src="data:image/png;base64,{{ result.plots.per_method_metrics_grouped }}"
+      class="plot-img"
+      alt="Grouped metrics per method"
+    />
+  </section>
+  {% endif %}
+{% endif %}
+
+<script>
+  // show overlay while the form is submitting
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("summaryForm");
+    const overlay = document.getElementById("loadingOverlay");
+
+    if (form && overlay) {
+      form.addEventListener("submit", function () {
+        overlay.style.display = "flex";
+      });
+    }
+  });
+</script>
+
+{% endblock %}

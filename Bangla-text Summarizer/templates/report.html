@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Defense Report | Bangla Crime News Summarizer{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Defense Report</h1>
+<section class="section">
+  <p class="section-subtext">
+    The full defense report (PDF) documents the dataset construction, preprocessing pipeline,
+    model fine-tuning, ensemble design, metric-based selection, and result analysis.
+  </p>
+
+  <div class="report-frame-wrap">
+    <iframe
+      src="{{ url_for('static', filename='report.pdf') }}"
+      width="100%"
+      height="600px"
+      class="report-frame"
+    ></iframe>
+  </div>
+</section>
+
+{% endblock %}

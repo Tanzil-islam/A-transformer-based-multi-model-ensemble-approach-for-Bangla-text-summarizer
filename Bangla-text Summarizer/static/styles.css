@@ -1,0 +1,568 @@
+/* ============================
+   CRIME-THEME GLOBAL UI
+   ============================ */
+
+:root {
+    --red: #A41F13;
+    --paper: #FAF5F1;
+    --file-grey: #E0DBD8;
+    --night: #12151A;
+    --folder: #8F7A6E;
+
+    --text-main: #FAF5F1;
+    --text-sub: #C7C2BF;
+
+    --card-bg: #1E2328;
+    --border: #8F7A6E;
+}
+
+/* BODY */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: var(--night);
+    color: var(--text-main);
+}
+
+/* ============================
+   NAVBAR
+   ============================ */
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--red);
+    padding: 10px 26px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    z-index: 50;
+}
+
+.nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--paper);
+    font-size: 14px;
+}
+
+.logo-mark {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #111;
+    border: 2px solid var(--paper);
+    display: inline-block;
+}
+
+.nav-links a {
+    color: var(--paper);
+    text-decoration: none;
+    margin-left: 16px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.nav-links a:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+/* ============================
+   MAIN LAYOUT
+   ============================ */
+
+.main {
+    max-width: 1200px;
+    margin: 80px auto 40px;
+    padding: 0 24px 24px;
+}
+
+/* PAGE TITLES */
+.page-title {
+    font-size: 26px;
+    margin-bottom: 14px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+}
+
+/* FLASH MESSAGES */
+.flash-container {
+    margin-bottom: 16px;
+}
+
+.flash {
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.flash-error {
+    background: rgba(164,31,19,0.25);
+    border: 1px solid #ff8580;
+}
+
+.flash-success {
+    background: rgba(61, 162, 103, 0.25);
+    border: 1px solid #7bd8a8;
+}
+
+/* ============================
+   GENERIC SECTION / CARD
+   ============================ */
+
+.section,
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+
+.section-title {
+    color: var(--red);
+    font-size: 20px;
+    margin-bottom: 6px;
+    text-shadow: 0 1px 3px black;
+}
+
+.section-subtext,
+.section-subtitle {
+    color: var(--text-sub);
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+/* ============================
+   HERO (HOME)
+   ============================ */
+
+.hero {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.hero-left {
+    flex: 3;
+}
+
+.hero-right {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-tag {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--file-grey);
+    margin-bottom: 4px;
+}
+
+.hero-title {
+    font-size: 26px;
+    margin: 6px 0 8px;
+}
+
+.hero-text {
+    font-size: 14px;
+    color: var(--text-sub);
+    line-height: 1.5;
+}
+
+.hero-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    border-radius: 6px;
+    padding: 8px 14px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background: var(--red);
+    color: var(--paper);
+}
+
+.btn-primary:hover {
+    background: #7e140d;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--paper);
+    border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+    background: rgba(255,255,255,0.04);
+}
+
+/* Crime board */
+.crime-board {
+    width: 100%;
+    min-height: 180px;
+    border-radius: 10px;
+    border: 2px dashed var(--border);
+    padding: 14px;
+    background: #15191F;
+    position: relative;
+}
+
+.crime-note {
+    background: #f0e4d7;
+    color: #3b2a21;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    font-size: 13px;
+}
+
+.crime-note-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.crime-note ul {
+    padding-left: 18px;
+    margin: 4px 0 0;
+}
+
+.crime-note li {
+    margin-bottom: 2px;
+}
+
+.crime-stamp {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 4px 8px;
+    transform: rotate(-5deg);
+}
+
+/* ============================
+   TEAM / ABOUT
+   ============================ */
+
+.team {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.member-card {
+    flex: 1;
+    min-width: 220px;
+    background: #161a1f;
+    border-radius: 10px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.member-photo-wrap {
+    width: 110px;
+    height: 110px;
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 0 auto 8px;
+    border: 3px solid var(--red);
+    box-shadow: 0 0 0 4px #2b3035;
+}
+
+.member-photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.member-name {
+    margin: 4px 0 2px;
+}
+
+.member-role {
+    font-size: 13px;
+    color: var(--file-grey);
+    margin-bottom: 6px;
+}
+
+.member-meta {
+    font-size: 12px;
+    color: var(--text-sub);
+}
+
+/* Overview cards */
+
+.overview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.overview-card {
+    flex: 1;
+    min-width: 230px;
+    background: #161a1f;
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+}
+
+/* ============================
+   FORMS (MODEL PAGE)
+   ============================ */
+
+.form-card textarea {
+    width: 100%;
+    background: #14181d;
+    color: var(--paper);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 8px;
+    font-size: 13px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: var(--file-grey);
+}
+
+/* Summaries */
+
+.summary-item {
+    background: #14181d;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.summary-item summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.summary-item p {
+    margin-top: 6px;
+    color: var(--text-sub);
+}
+
+.best-summary-box {
+    background: #14181d;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 12px;
+    font-size: 14px;
+}
+
+/* Plot images */
+.plot-img {
+    max-width: 100%;
+    border-radius: 10px;
+    border: 2px solid var(--folder);
+    background: #14181d;
+}
+
+/* ============================
+   DATA ANALYSIS / INFO CARDS
+   ============================ */
+
+.info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.info-card {
+    flex: 1;
+    min-width: 160px;
+    background: #14181d;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+}
+
+.info-card h3 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: var(--file-grey);
+}
+
+.info-number {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.info-number span {
+    font-size: 13px;
+    color: var(--text-sub);
+}
+
+/* Dataset table */
+.dataset-box {
+    max-height: 400px;
+    overflow-y: scroll;
+    border: 2px solid var(--red);
+    border-radius: 8px;
+    margin-top: 15px;
+    background: #14171B;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--paper);
+    font-size: 13px;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background: #2b3138;
+    z-index: 1;
+}
+
+th, td {
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+th {
+    font-weight: 600;
+}
+
+/* ============================
+   REPORT
+   ============================ */
+
+.report-frame-wrap {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: #14181d;
+}
+
+.report-frame {
+    border: none;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+@media (max-width: 768px) {
+    .nav-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .hero {
+        flex-direction: column;
+    }
+    .main {
+        margin-top: 96px;
+    }
+}
+
+/* -------------------------
+   Crime-Themed Evidence Box
+-------------------------- */
+
+.evidence {
+    border: 2px solid var(--folder);
+    background: #1b1f23;
+    padding: 18px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(164, 31, 19, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.evidence:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 18px rgba(255, 0, 0, 0.35);
+}
+
+.evidence h3 {
+    text-align: center;
+    color: var(--paper);
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* -------------------------
+   Modal View for Plots
+-------------------------- */
+
+#plotModal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 10, 0.9);
+}
+
+#plotModal img {
+    position: absolute;
+    max-width: 90%;
+    max-height: 90%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 3px solid var(--red);
+    border-radius: 10px;
+}
+
+#plotModal:active {
+    display: none;
+}
+

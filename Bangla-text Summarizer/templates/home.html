@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Home | Bangla Crime Report Summarizer{% endblock %}
+
+{% block content %}
+
+<section class="hero section">
+  <div class="hero-left">
+    <p class="hero-tag">Crime Scene: Bangla News</p>
+    <h1 class="hero-title">Automatic Bangla Crime Report Summarization</h1>
+    <p class="hero-text">
+      An ensemble of fine-tuned transformer models (BanglaT5 + mT5) that
+      investigates long Bangla crime reports and extracts a concise, informative summary —
+      using semantic and lexical metrics to choose the best version.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('model') }}" class="btn btn-primary">Try the Summarizer</a>
+      <a href="{{ url_for('data_analysis') }}" class="btn btn-ghost">View Dataset Analysis</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="crime-board">
+      <div class="crime-note">
+        <span class="crime-note-title">Project Highlights</span>
+        <ul>
+          <li>Bangla crime news corpus</li>
+          <li>Dual-model ensemble (BanglaT5 + mT5)</li>
+          <li>Metric-based summary selection</li>
+          <li>Research-grade evaluation</li>
+        </ul>
+      </div>
+      <div class="crime-stamp">CASE FILE: CRIME-SUM</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">About Us</h2>
+  <p class="section-subtitle">
+    Behind every case file there is a team of investigators. Here are the people
+    who built this system.
+  </p>
+
+  <div class="team">
+    <div class="member-card">
+      <div class="member-photo-wrap">
+        <img src="{{ url_for('static', filename='img/1.jpg') }}" alt="You">
+      </div>
+      <h3 class="member-name">Tanzil Islam</h3>
+      <p class="member-role">Undergraduate Researcher</p>
+      <p class="member-meta">ID: 221-15-5084</p>
+      <p class="member-meta">Email: islam15-5084@diu.edu.bd</p>
+    </div>
+
+    <div class="member-card">
+      <div class="member-photo-wrap">
+        <img src="{{ url_for('static', filename='img/2.jpg') }}" alt="Teammate">
+      </div>
+      <h3 class="member-name">Farhana Symoom</h3>
+      <p class="member-role">Undergraduate Researcher</p>
+      <p class="member-meta">ID: 221-15-5263</p>
+      <p class="member-meta">Email: symoom15-5263@diu.edu.bd</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">Project Overview</h2>
+  <div class="overview-grid">
+    <div class="overview-card">
+      <h3>Problem</h3>
+      <p>
+        Bangla crime news articles are often long, repetitive, and difficult to skim,
+        especially when reading multiple reports. Manual summarization is time-consuming.
+      </p>
+    </div>
+    <div class="overview-card">
+      <h3>Approach</h3>
+      <p>
+        We fine-tune BanglaT5 and mT5 on a curated Bangla crime dataset, generate multiple
+        candidate summaries, then use a suite of metrics (SBERT, ROUGE, BLEU, CER, coverage,
+        length, etc.) to automatically select the best candidate.
+      </p>
+    </div>
+    <div class="overview-card">
+      <h3>Deliverables</h3>
+      <p>
+        A working web interface, dataset analysis dashboard, detailed quantitative metrics,
+        and a defense report describing the full research pipeline end-to-end.
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
